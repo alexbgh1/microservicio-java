@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       # 1. Version in pom.xml
-      - name: Set up JDK 1.8
+      - name: Set up JDK 8
         uses: actions/setup-java@v4.2.1
         with:
           java-version: "8"
@@ -25,3 +25,19 @@ jobs:
       # 3. Run tests
       - name: Running Unit Test
         run: mvn package test
+
+      # 4. Sonnar
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4.2.1
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      # https://docs.sonarsource.com/sonarcloud/advanced-setup/ci-based-analysis/sonarscanner-for-maven
+      - name: Analisis SonarCloud
+        run: |
+          mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
+          -Dsonar.token=${{secrets.SONAR_TOKEN}} \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.organization=alexbgh1\
+          -Dsonar.projectKey=alexbgh1_microservicio-java
