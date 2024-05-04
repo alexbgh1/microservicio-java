@@ -60,3 +60,15 @@ jobs:
       - name: Docker Push
         run: |
           docker push ${{ secrets.DOCKER_USER }}/microservicio-java:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      # Clonar
+      - name: Clonación de código
+        uses: actions/checkout@v4
+      # Desplegar
+      - name: Despliegue Kubernetes
+        run: |
+          kubectl apply -f deploy.yaml
