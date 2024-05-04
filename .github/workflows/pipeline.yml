@@ -24,7 +24,7 @@ jobs:
 
       # 3. Run tests
       - name: Running Unit Test
-        run: mvn package test
+        run: mvn test
 
       # 4. Sonnar
       - name: Set up JDK 17
