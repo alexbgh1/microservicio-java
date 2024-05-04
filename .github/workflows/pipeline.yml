@@ -19,8 +19,8 @@ jobs:
           distribution: "temurin"
 
       # 2. Compile
-      - name: Build with Maven
-        run: mvn package
+      # - name: Build with Maven
+      #   run: mvn package
 
       # 3. Run tests
       - name: Running Unit Test
