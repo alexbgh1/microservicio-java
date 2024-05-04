@@ -24,8 +24,8 @@ jobs:
 
       # 3. Run tests
       - name: Running Unit Test
-        run: mvn test
-        continue-on-error: true
+        run: mvn clean verify
+        #continue-on-error: true
 
       # 3.1 Generate Jacoco report
       - name: Generate Jacoco report
