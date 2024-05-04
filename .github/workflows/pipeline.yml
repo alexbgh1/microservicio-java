@@ -23,9 +23,9 @@ jobs:
       #   run: mvn package
 
       # 3. Run tests
-      #- name: Running Unit Test
-        #run: mvn clean verify
-        #continue-on-error: true
+      - name: Running Unit Test
+        run: mvn clean verify
+        continue-on-error: true
 
       - name: JaCoCo Code Coverage Report
         id: jacoco_reporter
