@@ -129,7 +129,7 @@ jobs:
       - name: Run Postman/newman
         run: |
           $PORT = Get-Content port.txt
-          newman run .\pipeline-ci.postman_collection.json --env-var "PORT=1234"
+          newman run .\pipeline-ci.postman_collection.json --env-var "PORT=$PORT"
           $exitCode = $LASTEXITCODE
           if ($exitCode -ne 0) {
             exit 1
