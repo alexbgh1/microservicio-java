@@ -108,8 +108,9 @@ jobs:
 
       # https://stackoverflow.com/questions/57819539/github-actions-how-to-share-a-calculated-value-between-job-steps
       - name: Port from Kubernetes Service
-        #$PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
         run: |
+          $PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
+          $PORT > port.txt
           C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport="$PORT" -l result.jtl
 
       # if ($errorPercentage greater than 50) then exit 1 (50 is the threshold)
@@ -120,9 +121,18 @@ jobs:
           $errorPercentage = $summary -split 'Err:' | Select-String '\(\d+\.\d+%\)' -AllMatches | Foreach-Object { $_.Matches.Value }
 
           $errorPercentage = $errorPercentage -replace '[\(\)%]', '' 
+          cat port.txt
 
           if ($errorPercentage -gt 50) {
             exit 0
           }
 
+      - uses: matt-ball/newman-action@master
+        name: Run Postman tests
+        with:
+          apiKey: ${{ secrets.POSTMAN_API_KEY }}
+          collection: ${{ secrets.POSTMAN_COLLECTION }}
+          environment: ${{ secrets.POSTMAN_ENV }}
+          delayRequest: 1000
+          envVar: '[{ "key": "port", "value": "8080" }]'
         # TODO: Test using JMeter & acceptance criteria Postman
