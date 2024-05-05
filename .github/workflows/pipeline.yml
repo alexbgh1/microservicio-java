@@ -112,14 +112,13 @@ jobs:
         run: |
           $PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
           Write-Host "Puerto obtenido: $PORT"
-          echo "PORT=$PORT" >> $GITHUB_OUTPUT
           Write-Host "PORT=$PORT" >> $GITHUB_OUTPUT
 
       - name: Run JMeter
         env:
           PORT: ${{ steps.get_kubernetes_port.outputs.PORT }}
         run: |
-          echo "Puerto obtenido: $PORT"
+          Write-Host "Puerto obtenido: $PORT"
           C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport="$PORT" -l result.jtl
 
       # if ($errorPercentage greater than 50) then exit 1 (50 is the threshold)
