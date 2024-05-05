@@ -114,6 +114,6 @@ jobs:
       # JMeter test
       - name: Ejecutar pruebas de JMeter
         run: |
-          C:\apache-jmeter-5.6.3\bin\jmeter-n.cmd -n -t greeting.jmx -Jport=$PORT -l result.jtl
+          C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport="$PORT" -l result.jtl
 
         # TODO: Test using JMeter & acceptance criteria Postman
