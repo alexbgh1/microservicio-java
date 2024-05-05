@@ -112,7 +112,7 @@ jobs:
         run: |
           $PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
           Write-Host "Puerto obtenido: $PORT"
-          echo "PORT=$PORT" >> $GITHUB_ENV
+          echo "PORT=$PORT" >> $GITHUB_OUTPUT
 
       - name: Run JMeter
         run: |
@@ -120,6 +120,7 @@ jobs:
 
       # if ($errorPercentage greater than 50) then exit 1 (50 is the threshold)
       - name: Check Error Percentage
+        id: check_error_percentage
         run: |
           $jmeterLog = Get-Content jmeter.log
           $summary = $jmeterLog | Select-String 'summary.*'
@@ -127,8 +128,9 @@ jobs:
           # Remove () & percentage, example: (0.00%) -> 0.00
           $errorPercentage = $errorPercentage -replace '[\(\)%]', '' 
           Write-Host "Porcentaje de errores: $errorPercentage"
-          if ($errorPercentage -gt 50) {
-            exit 1
-          }
+          echo "ERROR_PERCENTAGE=$errorPercentage" >> $GITHUB_OUTPUT
 
+      - name: Check Error Percentage (exit)
+        if: steps.check_error_percentage.outputs.ERROR_PERCENTAGE > 50
+        run: exit 1
         # TODO: Test using JMeter & acceptance criteria Postman
