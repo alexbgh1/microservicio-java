@@ -106,11 +106,29 @@ jobs:
         run: |
           kubectl apply -f deploy.yaml
 
-      - name: Port from Kubernetes Service & JMeter test
-        # if executing in Windows (local), should send "$PORT" as parameter
+      # https://stackoverflow.com/questions/57819539/github-actions-how-to-share-a-calculated-value-between-job-steps
+      - name: Port from Kubernetes Service
+        id: get_kubernetes_port
         run: |
           $PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
           Write-Host "Puerto obtenido: $PORT"
-          C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport="$PORT" -l result.jtl
+          echo "PORT=$PORT" >> $GITHUB_ENV
+
+      - name: Run JMeter
+        run: |
+          C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport="${{ steps.get_kubernetes_port.outputs.PORT }}" -l result.jtl
+
+      # if ($errorPercentage greater than 50) then exit 1 (50 is the threshold)
+      - name: Check Error Percentage
+        run: |
+          $jmeterLog = Get-Content jmeter.log
+          $summary = $jmeterLog | Select-String 'summary.*'
+          $errorPercentage = $summary -split 'Err:' | Select-String '\(\d+\.\d+%\)' -AllMatches | Foreach-Object { $_.Matches.Value }
+          # Remove () & percentage, example: (0.00%) -> 0.00
+          $errorPercentage = $errorPercentage -replace '[\(\)%]', '' 
+          Write-Host "Porcentaje de errores: $errorPercentage"
+          if ($errorPercentage -gt 50) {
+            exit 1
+          }
 
         # TODO: Test using JMeter & acceptance criteria Postman
