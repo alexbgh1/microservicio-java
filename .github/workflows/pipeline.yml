@@ -107,9 +107,10 @@ jobs:
           kubectl apply -f deploy.yaml
 
       - name: Port from Kubernetes Service
+        shell: pwsh
         run: |
-          PORT=$(kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}')
-          echo "Puerto obtenido: $PORT"
+          $PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
+          Write-Host "Puerto obtenido: $PORT"
 
       - name: PerfAction for JMeter
         uses: QAInsights/PerfAction@v5.6.2
