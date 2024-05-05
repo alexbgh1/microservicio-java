@@ -114,23 +114,16 @@ jobs:
 
       # if ($errorPercentage greater than 50) then exit 1 (50 is the threshold)
       - name: Check Error Percentage
-        id: check_error_percentage
         run: |
           $jmeterLog = Get-Content jmeter.log
           $summary = $jmeterLog | Select-String 'summary.*'
           $errorPercentage = $summary -split 'Err:' | Select-String '\(\d+\.\d+%\)' -AllMatches | Foreach-Object { $_.Matches.Value }
 
           # Remove () & percentage, example: (0.00%) -> 0.00
-
           $errorPercentage = $errorPercentage -replace '[\(\)%]', '' 
-          Write-Host "Porcentaje de errores: $errorPercentage"
-          echo "ERROR_PERCENTAGE=$errorPercentage" >> $GITHUB_OUTPUT
 
-      - name: Check Error Percentage (exit)
-        env:
-          ERROR_PERCENTAGE: ${{ steps.check_error_percentage.outputs.ERROR_PERCENTAGE }}
-        if: steps.check_error_percentage.outputs.ERROR_PERCENTAGE > 50
-        run: |
-          Write-Host "Porcentaje de errores mayor a 50%"
-          exit 1
+          if ($errorPercentage -gt 50) {
+            exit 1
+          }
+
         # TODO: Test using JMeter & acceptance criteria Postman
