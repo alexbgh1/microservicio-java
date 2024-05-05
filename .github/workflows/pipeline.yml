@@ -121,7 +121,6 @@ jobs:
           $errorPercentage = $summary -split 'Err:' | Select-String '\(\d+\.\d+%\)' -AllMatches | Foreach-Object { $_.Matches.Value }
 
           $errorPercentage = $errorPercentage -replace '[\(\)%]', '' 
-          cat port.txt
 
           if ($errorPercentage -gt 50) {
             exit 0
@@ -134,5 +133,5 @@ jobs:
           collection: ${{ secrets.POSTMAN_COLLECTION }}
           environment: ${{ secrets.POSTMAN_ENV }}
           delayRequest: 1000
-          envVar: '[{ "key": "port", "value": "8080" }]'
+          envVar: '[{ "key": "PORT", "value": "$(cat port.txt)" }]'
         # TODO: Test using JMeter & acceptance criteria Postman
