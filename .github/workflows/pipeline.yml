@@ -126,14 +126,7 @@ jobs:
             exit 0
           }
 
-      - uses: matt-ball/newman-action@master
-        name: Run Postman tests
-        env:
-          PORT: $(cat port.txt)
-        with:
-          apiKey: ${{ secrets.POSTMAN_API_KEY }}
-          collection: ${{ secrets.POSTMAN_COLLECTION }}
-          environment: ${{ secrets.POSTMAN_ENV }}
-          delayRequest: 1000
-          envVar: '[{ "key": "PORT", "value": "32272"}]'
-        # TODO: Test using JMeter & acceptance criteria Postman
+      - name: Run Postman/newman
+        run: |
+          $PORT = Get-Content port.txt
+          newman run .\pipeline-ci.postman_collection.json --env-var "PORT=$PORT"
