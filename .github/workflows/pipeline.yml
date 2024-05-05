@@ -135,5 +135,5 @@ jobs:
           collection: ${{ secrets.POSTMAN_COLLECTION }}
           environment: ${{ secrets.POSTMAN_ENV }}
           delayRequest: 1000
-          envVar: '[{ "key": "PORT", "value": "$PORT" }]'
+          envVar: '[{ "key": "PORT", "value": $PORT }]'
         # TODO: Test using JMeter & acceptance criteria Postman
