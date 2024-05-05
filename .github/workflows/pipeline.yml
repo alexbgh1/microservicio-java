@@ -111,12 +111,8 @@ jobs:
           $PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
           Write-Host "Puerto obtenido: $PORT"
 
-      - name: PerfAction for JMeter
-        uses: QAInsights/PerfAction@v5.6.2
-        with:
-          # JMeter test plan to execute
-          test-plan-path: greeting.jmx
-          # Optional arguments. https://jmeter.apache.org/usermanual/get-started.html#non_gui
-          args: "-P $PORT"
+      - name: Ejecutar pruebas de JMeter
+        run: |
+          jmeter -n -t greeting.jmx -Jport=$PORT -l result.jtl
 
         # TODO: Test using JMeter & acceptance criteria Postman
