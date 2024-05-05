@@ -113,10 +113,14 @@ jobs:
           $PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
           Write-Host "Puerto obtenido: $PORT"
           echo "PORT=$PORT" >> $GITHUB_OUTPUT
+          Write-Host "PORT=$PORT" >> $GITHUB_OUTPUT
 
       - name: Run JMeter
+        env:
+          PORT: ${{ steps.get_kubernetes_port.outputs.PORT }}
         run: |
-          C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport="${{ steps.get_kubernetes_port.outputs.PORT }}" -l result.jtl
+          echo "Puerto obtenido: $PORT"
+          C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport="$PORT" -l result.jtl
 
       # if ($errorPercentage greater than 50) then exit 1 (50 is the threshold)
       - name: Check Error Percentage
@@ -125,12 +129,18 @@ jobs:
           $jmeterLog = Get-Content jmeter.log
           $summary = $jmeterLog | Select-String 'summary.*'
           $errorPercentage = $summary -split 'Err:' | Select-String '\(\d+\.\d+%\)' -AllMatches | Foreach-Object { $_.Matches.Value }
+
           # Remove () & percentage, example: (0.00%) -> 0.00
+
           $errorPercentage = $errorPercentage -replace '[\(\)%]', '' 
           Write-Host "Porcentaje de errores: $errorPercentage"
           echo "ERROR_PERCENTAGE=$errorPercentage" >> $GITHUB_OUTPUT
 
       - name: Check Error Percentage (exit)
+        env:
+          ERROR_PERCENTAGE: ${{ steps.check_error_percentage.outputs.ERROR_PERCENTAGE }}
         if: steps.check_error_percentage.outputs.ERROR_PERCENTAGE > 50
-        run: exit 1
+        run: |
+          Write-Host "Porcentaje de errores mayor a 50%"
+          exit 1
         # TODO: Test using JMeter & acceptance criteria Postman
