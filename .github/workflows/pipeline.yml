@@ -113,7 +113,8 @@ jobs:
 
       # JMeter test
       - name: Ejecutar pruebas de JMeter
+        # if executing in Windows (local), should send "$PORT" as parameter
         run: |
-          C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport="$PORT" -l result.jtl
+          C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport=$PORT -l result.jtl
 
         # TODO: Test using JMeter & acceptance criteria Postman
