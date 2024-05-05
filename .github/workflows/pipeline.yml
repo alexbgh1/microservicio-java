@@ -108,8 +108,8 @@ jobs:
 
       # https://stackoverflow.com/questions/57819539/github-actions-how-to-share-a-calculated-value-between-job-steps
       - name: Port from Kubernetes Service
+        #$PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
         run: |
-          $PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
           C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport="$PORT" -l result.jtl
 
       # if ($errorPercentage greater than 50) then exit 1 (50 is the threshold)
