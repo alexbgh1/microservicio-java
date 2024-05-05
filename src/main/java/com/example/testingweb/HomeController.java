@@ -9,8 +9,7 @@ public class HomeController {
 
 	@RequestMapping("/")
 	public @ResponseBody String greeting() {
-		// forzar falla
-		return "";
+		return "Hello, World";
 	}
 
 }

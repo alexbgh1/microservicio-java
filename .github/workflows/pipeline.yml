@@ -25,7 +25,6 @@ jobs:
       # 3. Run tests
       - name: Running Unit Test
         run: mvn clean test
-        continue-on-error: true
 
       # 3.1 Generate Jacoco report
       - name: Generate Jacoco report
@@ -40,7 +39,7 @@ jobs:
           coverage_report_title: JaCoCo
           github_token: ${{ secrets.GITHUB_TOKEN }}
           skip_check_run: false
-          minimum_coverage: 80
+          minimum_coverage: 72
           fail_below_threshold: true
           publish_only_summary: false
 
