@@ -20,36 +20,36 @@ jobs:
 
       # 2. Compile
       #- name: Build with Maven
-       # run: mvn package
+      # run: mvn package
 
       # 3. Run tests
       #- name: Running Unit Test
-       # run: mvn clean test
+      # run: mvn clean test
 
       # 3.1 Generate Jacoco report
       #- name: Generate Jacoco report
-       # run: mvn jacoco:report
+      # run: mvn jacoco:report
 
       # 3.2 Jacoco fail bellow threshold
       #- name: JaCoCo Code Coverage Report
-       # id: jacoco_reporter
-       # uses: PavanMudigonda/jacoco-reporter@v5.0
-       # with:
-       #   coverage_results_path: target/site/jacoco/jacoco.xml
-       #   coverage_report_name: Coverage
-       #   coverage_report_title: JaCoCo
-       #   github_token: ${{ secrets.GITHUB_TOKEN }}
-       #   skip_check_run: false
-       #   minimum_coverage: 72
-       #   fail_below_threshold: true
-       #   publish_only_summary: false
+      # id: jacoco_reporter
+      # uses: PavanMudigonda/jacoco-reporter@v5.0
+      # with:
+      #   coverage_results_path: target/site/jacoco/jacoco.xml
+      #   coverage_report_name: Coverage
+      #   coverage_report_title: JaCoCo
+      #   github_token: ${{ secrets.GITHUB_TOKEN }}
+      #   skip_check_run: false
+      #   minimum_coverage: 72
+      #   fail_below_threshold: true
+      #   publish_only_summary: false
 
       # 3.3. Upload Jacoco report as artifact
       #- name: Upload Jacoco report
-       # uses: actions/upload-artifact@v4
-       # with:
-       #   name: jacoco-report
-       #   path: target/site/jacoco/index.html
+      # uses: actions/upload-artifact@v4
+      # with:
+      #   name: jacoco-report
+      #   path: target/site/jacoco/index.html
 
       # 4. Sonar (previous compile to avoid conflicts)
       #- name: Set up JDK 17
@@ -59,42 +59,41 @@ jobs:
       #    distribution: "temurin"
       #- run: mvn package
 
-      # 4.1 Sonar Analisis 
+      # 4.1 Sonar Analisis
       # https://docs.sonarsource.com/sonarcloud/advanced-setup/ci-based-analysis/sonarscanner-for-maven
       #- name: Analisis SonarCloud
-       # run: |
-       #   mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
-       #   -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-       #   -Dsonar.host.url=https://sonarcloud.io \
-       #   -Dsonar.organization=alexbgh1 \
-       #   -Dsonar.projectKey=alexbgh1_microservicio-java
-          
+      # run: |
+      #   mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
+      #   -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+      #   -Dsonar.host.url=https://sonarcloud.io \
+      #   -Dsonar.organization=alexbgh1 \
+      #   -Dsonar.projectKey=alexbgh1_microservicio-java
+
       # 4.2 Sonar Quality Gate
       #- name: SonarQube Quality Gate Check
-        #env:
-        #  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        #uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
-        #with:
-        #  scanMetadataReportFile: target/sonar/report-task.txt
-          
+      #env:
+      #  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+      #with:
+      #  scanMetadataReportFile: target/sonar/report-task.txt
 
       # 5. Docker Build & Push to dockerhub
       #- name: Docker Login
-        #uses: docker/login-action@v3.1.0
-        #with:
-          #username: ${{ secrets.DOCKER_USER }}
-          #password: ${{ secrets.DOCKER_PASS }}
+      #uses: docker/login-action@v3.1.0
+      #with:
+      #username: ${{ secrets.DOCKER_USER }}
+      #password: ${{ secrets.DOCKER_PASS }}
 
       #- name: Set up Docker Buildx
-        #uses: docker/setup-buildx-action@v3
+      #uses: docker/setup-buildx-action@v3
 
       #- name: Docker Build
-        #run: |
-        #  docker build . -t ${{ secrets.DOCKER_USER }}/microservicio-java:latest
+      #run: |
+      #  docker build . -t ${{ secrets.DOCKER_USER }}/microservicio-java:latest
 
       #- name: Docker Push
-        #run: |
-        #  docker push ${{ secrets.DOCKER_USER }}/microservicio-java:latest
+      #run: |
+      #  docker push ${{ secrets.DOCKER_USER }}/microservicio-java:latest
 
   deploy:
     needs: build
@@ -107,10 +106,10 @@ jobs:
         run: |
           kubectl apply -f deploy.yaml
 
-      - name: Port from Kubernetes Service 
+      - name: Port from Kubernetes Service
         run: |
           PORT=$(kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}')
-          echo "Puerto obtenido: $PORT
+          echo "Puerto obtenido: $PORT"
 
       - name: PerfAction for JMeter
         uses: QAInsights/PerfAction@v5.6.2
@@ -119,5 +118,5 @@ jobs:
           test-plan-path: greeting.jmx
           # Optional arguments. https://jmeter.apache.org/usermanual/get-started.html#non_gui
           args: "-P $PORT"
-              
+
         # TODO: Test using JMeter & acceptance criteria Postman
