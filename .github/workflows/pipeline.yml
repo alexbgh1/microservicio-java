@@ -31,19 +31,20 @@ jobs:
         run: mvn jacoco:report
 
         # 3.2 Jacoco fail bellow threshold
-      # - name: JaCoCo Code Coverage Report
-      #   id: jacoco_reporter
-      #   uses: PavanMudigonda/jacoco-reporter@v5.0
-      #   with:
-      #     coverage_results_path: target/site/jacoco/jacoco.xml
-      #     coverage_report_name: Coverage
-      #     coverage_report_title: JaCoCo
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     skip_check_run: false
-      #     minimum_coverage: 72
-      #     fail_below_threshold: true
-      #     publish_only_summary: false
-      # 3.3. Upload Jacoco report as artifact
+      - name: JaCoCo Code Coverage Report
+        id: jacoco_reporter
+        uses: PavanMudigonda/jacoco-reporter@v5.0
+        with:
+          coverage_results_path: target/site/jacoco/jacoco.xml
+          coverage_report_name: Coverage
+          coverage_report_title: JaCoCo
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_check_run: false
+          minimum_coverage: 72
+          fail_below_threshold: true
+          publish_only_summary: false
+
+        # 3.3. Upload Jacoco report as artifact
       - name: Upload Jacoco report
         uses: actions/upload-artifact@v4
         with:
