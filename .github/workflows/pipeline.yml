@@ -122,6 +122,8 @@ jobs:
           $errorPercentage = $summary -split 'Err:' | Select-String '\(\d+\.\d+%\)' -AllMatches | Foreach-Object { $_.Matches.Value }
           $errorPercentage = $errorPercentage -replace '[\(\)%]', '' 
 
+          Write-Host "Error Percentage: $errorPercentage"
+
           if ([double]$errorPercentage -gt 50) {
             Write-Host "Error Percentage is greater than 50%"
             exit 1
