@@ -117,16 +117,15 @@ jobs:
       - name: Check Error Percentage
         run: |
           $jmeterLog = Get-Content jmeter.log
-          Write-Host $jmeterLog
+
           $summary = $jmeterLog | Select-String 'summary.*'
-          Write-Host $summary
           $errorPercentage = $summary -split 'Err:' | Select-String '\(\d+\.\d+%\)' -AllMatches | Foreach-Object { $_.Matches.Value }
-          Write-Host $errorPercentage
-
           $errorPercentage = $errorPercentage -replace '[\(\)%]', '' 
-          Write-Host $errorPercentage
 
-          if ($errorPercentage -gt 50) {
+          Write-Host $errorPercentage
+          Write-Host $[double]errorPercentage
+
+          if ([double]$errorPercentage -gt 50) {
             Write-Host "Error Percentage is greater than 50%"
             exit 1
           }
