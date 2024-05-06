@@ -107,7 +107,7 @@ jobs:
           kubectl apply -f deploy.yaml
 
       # https://stackoverflow.com/questions/57819539/github-actions-how-to-share-a-calculated-value-between-job-steps
-      - name: Port from Kubernetes Service
+      - name: Save Port from Kubernetes Service
         run: |
           $PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
           $PORT > port.txt
@@ -117,14 +117,20 @@ jobs:
       - name: Check Error Percentage
         run: |
           $jmeterLog = Get-Content jmeter.log
+          Write-Host $jmeterLog
           $summary = $jmeterLog | Select-String 'summary.*'
+          Write-Host $summary
           $errorPercentage = $summary -split 'Err:' | Select-String '\(\d+\.\d+%\)' -AllMatches | Foreach-Object { $_.Matches.Value }
+          Write-Host $errorPercentage
 
           $errorPercentage = $errorPercentage -replace '[\(\)%]', '' 
+          Write-Host $errorPercentage
 
           if ($errorPercentage -gt 50) {
+            Write-Host "Error Percentage is greater than 50%"
             exit 1
           }
+          Write-Host "Error Percentage is less than 50%"
 
       - name: Run Postman/newman
         run: |
