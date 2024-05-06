@@ -111,7 +111,7 @@ jobs:
         run: |
           $PORT = kubectl get svc service-microservicio-java -o=jsonpath='{.spec.ports[0].nodePort}'
           $PORT > port.txt
-          C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport="$PORT" -l result.jtl
+          C:\apache-jmeter-5.6.3\bin\jmeter.bat -n -t greeting.jmx -Jport="8080" -l result.jtl
 
       # if ($errorPercentage greater than 50) then exit 1 (50 is the threshold)
       - name: Check Error Percentage
@@ -123,7 +123,7 @@ jobs:
           $errorPercentage = $errorPercentage -replace '[\(\)%]', '' 
 
           if ($errorPercentage -gt 50) {
-            exit 0
+            exit 1
           }
 
       - name: Run Postman/newman
